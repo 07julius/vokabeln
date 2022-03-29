@@ -16,8 +16,10 @@ import com.example.vokabeln.MainActivity
 import com.example.vokabeln.tabs.item.TabItem
 import com.example.vokabeln.tabs.items.englisch.config.AndroidConfig
 import com.example.vokabeln.tabs.items.englisch.config.Vocab
+import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.Modifiers
+import com.example.vokabeln.utils.vocabs.getWorst
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 
@@ -66,6 +68,7 @@ val addVocab: TabItem
                         )
                         if (vocab !in AndroidConfig.instance.vocabs) {
                             AndroidConfig.instance.vocabs += vocab
+                            Abfrage.item = AndroidConfig.instance.vocabs.getWorst()
                             MainActivity.makeTaost("vokabel erstellt")
                         } else {
                             MainActivity.makeTaost("vokabel existiert bereits")

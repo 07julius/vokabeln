@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.vokabeln.MainActivity
 import com.example.vokabeln.tabs.items.englisch.config.AndroidConfig
+import com.example.vokabeln.tabs.items.englisch.config.Vocab
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.Modifiers
@@ -91,11 +92,17 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
                                 texts[getChecked()?.first ?: 0].lowercase(Locale.getDefault()).trim()
                             ) == true
                     ) {
-                        item?.guessedRight = (item?.guessedRight ?: 0) + 1
+                        //item?.guessedRight = (item?.guessedRight ?: 0) + 1
+                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)] =
+                            Vocab(item!!.english, item!!.german, (item?.guessedRight ?: 0) + 1, item!!.guessedWrong)
                         method = method.next()
+                        //item = AndroidConfig.instance.vocabs.getWorst()
                         MainActivity.makeTaost("richtig")
                     } else {
-                        item?.guessedWrong = (item?.guessedWrong ?: 0) + 1
+                        //item?.guessedWrong = (item?.guessedWrong ?: 0) + 1
+                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)] =
+                            Vocab(item!!.english, item!!.german, item!!.guessedRight, (item?.guessedWrong ?: 0) + 1)
+
                         method = method.nextInLanguage()
                         MainActivity.makeTaost("falsch")
                     }

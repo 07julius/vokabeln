@@ -2,6 +2,7 @@ package com.example.vokabeln.tabs.items.englisch.config
 
 import androidx.compose.runtime.mutableStateListOf
 import com.example.vokabeln.MainActivity
+import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -45,6 +46,7 @@ class AndroidConfig private constructor() {
 
     fun deleted() {
         vocabs.clear()
+        Abfrage.item = null
         saveVocabs()
     }
 }

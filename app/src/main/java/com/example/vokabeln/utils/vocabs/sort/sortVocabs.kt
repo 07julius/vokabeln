@@ -16,12 +16,12 @@ fun List<Vocab>.sortByGerman(): List<Vocab> {
 
 fun List<Vocab>.sortByRight(): List<Vocab> {
     return sortedBy { vocab ->
-        -vocab.guessedRight
-    }
+        vocab.guessedRight
+    }.reversed()
 }
 
 fun List<Vocab>.sortByWrong(): List<Vocab> {
     return sortedBy { vocab ->
-        -vocab.guessedWrong
-    }
+        vocab.guessedWrong
+    }.reversed()
 }

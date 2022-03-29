@@ -20,11 +20,14 @@ import com.example.vokabeln.MainActivity
 import com.example.vokabeln.tabs.item.TabItem
 import com.example.vokabeln.tabs.items.englisch.config.AndroidConfig
 import com.example.vokabeln.tabs.items.englisch.config.Vocab
+import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.Modifiers
 import com.example.vokabeln.theme.TextSizes
+import com.example.vokabeln.utils.collections.mapInPlace
 import com.example.vokabeln.utils.compose.TableCell
 import com.example.vokabeln.utils.compose.icons.Trash
+import com.example.vokabeln.utils.vocabs.getWorst
 import com.example.vokabeln.utils.vocabs.sort.SortMethod
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
@@ -48,6 +51,7 @@ val vokabeln: TabItem
             if (itemsDeleting[item] == true) {
                 AndroidConfig.instance.vocabs.remove(item)
                 AndroidConfig.instance.saveVocabs()
+                Abfrage.item = AndroidConfig.instance.vocabs.getWorst()
                 MainActivity.makeTaost("vokabel gelöscht")
                 return@launch
             }
@@ -55,14 +59,6 @@ val vokabeln: TabItem
             itemsDeleting[item] = true
             delay(delay)
             itemsDeleting[item] = false
-        }
-
-        scope.launch {
-            while (true) {
-                delay(100)
-                list.clear()
-                list += sortMethod.sort(AndroidConfig.instance.vocabs.toMutableStateList())
-            }
         }
 
         val column1Weight = .6f
@@ -87,18 +83,21 @@ val vokabeln: TabItem
                     }
                 }
 
-                itemsIndexed(list) { index, item ->
-                    Row(Modifier.fillMaxWidth().clickable {
-                        itemDeleted(item, index)
-                    }) {
+                itemsIndexed(sortMethod.sort(list)) { index, item ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                itemDeleted(item, index)
+                            }) {
                         TableCell(
                             text = item.english.joinToString(",\n") { it },
                             weight = column1Weight,
                             fontSize = TextSizes.bottomTableTextSize
                         )
                         TableCell(text = item.german.joinToString(",\n") { it }, weight = column1Weight, fontSize = TextSizes.bottomTableTextSize)
-                        TableCell(text = item.guessedRight.toString(), weight = column2Weight, fontSize = TextSizes.bottomTableTextSize)
-                        TableCell(text = item.guessedWrong.toString(), weight = column2Weight, fontSize = TextSizes.bottomTableTextSize)
+                        TableCell(text = "${item.guessedRight}", weight = column2Weight, fontSize = TextSizes.bottomTableTextSize)
+                        TableCell(text = "${item.guessedWrong}", weight = column2Weight, fontSize = TextSizes.bottomTableTextSize)
                     }
                 }
 
@@ -125,9 +124,14 @@ val vokabeln: TabItem
                         Button(
                             onClick = {
                                 AndroidConfig.instance.vocabs.forEach {
-                                    it.guessedRight = 0
-                                    it.guessedWrong = 0
+                                    it.apply {
+                                        it.guessedRight = 0
+                                        it.guessedWrong = 0
+                                    }
                                 }
+                                AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
+                                AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+                                Abfrage.item = AndroidConfig.instance.vocabs.getWorst()
                                 AndroidConfig.instance.saveVocabs()
                             },
                             content = {

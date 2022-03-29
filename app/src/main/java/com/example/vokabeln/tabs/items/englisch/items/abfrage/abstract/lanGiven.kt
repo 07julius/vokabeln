@@ -16,6 +16,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import com.example.vokabeln.MainActivity
 import com.example.vokabeln.tabs.items.englisch.config.AndroidConfig
+import com.example.vokabeln.tabs.items.englisch.config.Vocab
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.Modifiers
@@ -41,14 +42,21 @@ fun Abfrage.lanGiven(given: List<String>?, searchIn: List<String>?, inputLabel: 
                     .lowercase(Locale.getDefault())
             ) == true
         ) {
-            item?.guessedRight = (item?.guessedRight ?: 0) + 1
+            AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedRight++ }
+            AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
+            AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+
             method = method.next()
+            item = AndroidConfig.instance.vocabs.getWorst()
             MainActivity.makeTaost("richtig")
         } else {
             if (AndroidConfig.instance.vocabs.isEmpty()) return
-            item?.guessedWrong = (item?.guessedWrong ?: 0) + 1
-            method = method.nextInLanguage()
+            AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedWrong++ }
+            AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
+            AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
 
+            method = method.nextInLanguage()
+            item = AndroidConfig.instance.vocabs.getWorst()
             MainActivity.makeTaost("falsch")
         }
         AndroidConfig.instance.saveVocabs()

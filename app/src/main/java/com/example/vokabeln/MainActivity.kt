@@ -26,7 +26,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 class MainActivity : ComponentActivity() {
     companion object {
-        private var languageEnum by mutableStateOf(Languages.LITHUANIAN)
+        private var languageEnum by mutableStateOf(Languages.ENGLISH)
         val language: String get() = languageEnum.germanName
 
         var state by mutableStateOf("")

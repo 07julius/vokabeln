@@ -66,6 +66,9 @@ val addVocab: TabItem
                         )
                         if (vocab !in AndroidConfig.instance.vocabs) {
                             AndroidConfig.instance.vocabs += vocab
+                            MainActivity.makeTaost("vokabel erstellt")
+                        } else {
+                            MainActivity.makeTaost("vokabel existiert bereits")
                         }
                         englishState = ""
                         deutschState = ""
@@ -74,6 +77,8 @@ val addVocab: TabItem
                         scope.launch {
                             MainActivity.pagerState.animateScrollToPage(1)
                         }
+                    } else {
+                        MainActivity.makeTaost("${MainActivity.language} und deutsch müssen gegeben sein")
                     }
                 }, colors = Colors.tabItemButtonColors,
                 modifier = Modifier.fillMaxWidth()

@@ -48,6 +48,7 @@ val vokabeln: TabItem
             if (itemsDeleting[item] == true) {
                 AndroidConfig.instance.vocabs.remove(item)
                 AndroidConfig.instance.saveVocabs()
+                MainActivity.makeTaost("vokabel gelöscht")
                 return@launch
             }
 

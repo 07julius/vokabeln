@@ -6,12 +6,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +26,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 class MainActivity : ComponentActivity() {
     companion object {
-        private var languageEnum = Languages.LITHUANIAN
+        private var languageEnum by mutableStateOf(Languages.LITHUANIAN)
         val language: String get() = languageEnum.germanName
 
         var state by mutableStateOf("")
@@ -40,8 +38,9 @@ class MainActivity : ComponentActivity() {
         lateinit var pagerState: PagerState
             private set
 
-        fun makeTaost(text: String, duration: Int = Toast.LENGTH_LONG + 1) =
+        fun makeTaost(text: String, duration: Int = Toast.LENGTH_LONG) {
             Toast.makeText(instance.applicationContext, text, duration).show()
+        }
     }
 
     @OptIn(ExperimentalPagerApi::class)
@@ -58,14 +57,18 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun English() {
         state = language.uppercase()
+        val interactionSource = remember { MutableInteractionSource() }
         Tab(
             listOf(addVocab, vokabeln, Abfrage.abfrage),
             Color(216, 27, 96),
             isTablet
         ) {
             TopAppBar(
-                title = { Text(text = state, fontSize = TextSizes.topAppBarTextSize, modifier = Modifier.clickable {
-                    //languageEnum = languageEnum.next()
+                title = { Text(language.uppercase(), fontSize = TextSizes.topAppBarTextSize, modifier = Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    languageEnum = languageEnum.next()
                 }) },
                 backgroundColor = Colors.topAppBarBackgroundColor,
                 contentColor = Colors.topAppBarContentColor

@@ -10,8 +10,6 @@ data class Vocab(val english: List<String>, val german: List<String>, var guesse
     override fun hashCode(): Int {
         var result = english.hashCode()
         result = 31 * result + german.hashCode()
-        result = 31 * result + guessedRight
-        result = 31 * result + guessedWrong
         return result
     }
 }

@@ -92,18 +92,20 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
                                 texts[getChecked()?.first ?: 0].lowercase(Locale.getDefault()).trim()
                             ) == true
                     ) {
-                        //item?.guessedRight = (item?.guessedRight ?: 0) + 1
-                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)] =
-                            Vocab(item!!.english, item!!.german, (item?.guessedRight ?: 0) + 1, item!!.guessedWrong)
+                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedRight++ }
+                        AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
+                        AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+
                         method = method.next()
-                        //item = AndroidConfig.instance.vocabs.getWorst()
+                        item = AndroidConfig.instance.vocabs.getWorst()
                         MainActivity.makeTaost("richtig")
                     } else {
-                        //item?.guessedWrong = (item?.guessedWrong ?: 0) + 1
-                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)] =
-                            Vocab(item!!.english, item!!.german, item!!.guessedRight, (item?.guessedWrong ?: 0) + 1)
+                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedWrong++ }
+                        AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
+                        AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
 
                         method = method.nextInLanguage()
+                        item = AndroidConfig.instance.vocabs.getWorst()
                         MainActivity.makeTaost("falsch")
                     }
 

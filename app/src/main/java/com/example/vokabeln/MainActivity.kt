@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.Abfrage
 import com.example.vokabeln.tabs.items.englisch.items.addVocab
-import com.example.vokabeln.tabs.items.englisch.items.vokabeln
+import com.example.vokabeln.tabs.items.englisch.items.allVocabs.vokabeln
 import com.example.vokabeln.tabs.tab.Tab
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.TextSizes
@@ -26,7 +26,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 class MainActivity : ComponentActivity() {
     companion object {
-        private var languageEnum by mutableStateOf(Languages.LITHUANIAN)
+        private var languageEnum by mutableStateOf(Languages.ENGLISH)
         val language: String get() = languageEnum.germanName
 
         var state by mutableStateOf("")
@@ -38,7 +38,11 @@ class MainActivity : ComponentActivity() {
         lateinit var pagerState: PagerState
             private set
 
-        fun makeTaost(text: String, duration: Int = Toast.LENGTH_LONG) {
+        @OptIn(ExperimentalPagerApi::class)
+        lateinit var configKeyPagerState: PagerState
+            private set
+
+        fun makeTaost(text: String, duration: Int = Toast.LENGTH_SHORT) {
             Toast.makeText(instance.applicationContext, text, duration).show()
         }
     }
@@ -49,17 +53,19 @@ class MainActivity : ComponentActivity() {
         instance = this
         setContent {
             pagerState = rememberPagerState()
+            configKeyPagerState = rememberPagerState()
             English()
         }
     }
 
+    @OptIn(ExperimentalPagerApi::class)
     @Preview
     @Composable
     fun English() {
         state = language.uppercase()
         val interactionSource = remember { MutableInteractionSource() }
         Tab(
-            listOf(addVocab, vokabeln, Abfrage.abfrage),
+            mutableStateListOf(addVocab, vokabeln, Abfrage.abfrage),
             Color(216, 27, 96),
             isTablet
         ) {
@@ -68,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     interactionSource = interactionSource,
                     indication = null
                 ) {
-                    languageEnum = languageEnum.next()
+                    //languageEnum = languageEnum.next()
                 }) },
                 backgroundColor = Colors.topAppBarBackgroundColor,
                 contentColor = Colors.topAppBarContentColor

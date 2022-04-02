@@ -42,27 +42,29 @@ fun Abfrage.lanGiven(given: List<String>?, searchIn: List<String>?, inputLabel: 
                     .lowercase(Locale.getDefault())
             ) == true
         ) {
-            AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedRight++ }
-            AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
-            AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+            AndroidConfig.instance.applyVocab(item!!) {
+                guessedRight++
+            }
+            AndroidConfig.instance.update()
 
             method = method.next()
-            item = AndroidConfig.instance.vocabs.getWorst()
+            item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
             MainActivity.makeTaost("richtig")
         } else {
             if (AndroidConfig.instance.vocabs.isEmpty()) return
-            AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedWrong++ }
-            AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
-            AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+            AndroidConfig.instance.applyVocab(item!!) {
+                guessedWrong++
+            }
+            AndroidConfig.instance.update()
 
             method = method.nextInLanguage()
-            item = AndroidConfig.instance.vocabs.getWorst()
+            item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
             MainActivity.makeTaost("falsch")
         }
         AndroidConfig.instance.saveVocabs()
 
         typedState = ""
-        item = AndroidConfig.instance.vocabs.getWorst()
+        item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
     }
 
     Column(modifier = Modifiers.tabItemColumnModifier) {

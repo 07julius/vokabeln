@@ -32,11 +32,11 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
     val checked = mutableStateMapOf<Int, Boolean>()
     val scope = rememberCoroutineScope()
 
-    fun getChecked(): Pair<Int, Boolean>? {
+    fun getChecked(): Pair<Int, Boolean> {
         checked.forEach { (i, b) ->
             if (b) return i to b
         }
-        return null
+        return -1 to false
     }
 
     repeat(boxes) {
@@ -45,7 +45,6 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
 
     LazyColumn(modifier = Modifiers.tabItemColumnModifier) {
         item {
-
             TabItemText(text = given?.joinToString { it } ?: "vokabeln erstellen", modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
@@ -92,20 +91,23 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
                                 texts[getChecked()?.first ?: 0].lowercase(Locale.getDefault()).trim()
                             ) == true
                     ) {
-                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedRight++ }
-                        AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
-                        AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+                        AndroidConfig.instance.applyVocab(item!!) {
+                            guessedRight++
+                        }
+
+                        AndroidConfig.instance.update()
 
                         method = method.next()
-                        item = AndroidConfig.instance.vocabs.getWorst()
+                        item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
                         MainActivity.makeTaost("richtig")
                     } else {
-                        AndroidConfig.instance.vocabs[AndroidConfig.instance.vocabs.indexOf(item!!)].apply { guessedWrong++ }
-                        AndroidConfig.instance.vocabs += Vocab(listOf(), listOf(), -1, -1)
-                        AndroidConfig.instance.vocabs -= Vocab(listOf(), listOf(), -1, -1)
+                        AndroidConfig.instance.applyVocab(item!!) {
+                            guessedWrong++
+                        }
+                        AndroidConfig.instance.update()
 
                         method = method.nextInLanguage()
-                        item = AndroidConfig.instance.vocabs.getWorst()
+                        item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
                         MainActivity.makeTaost("falsch")
                     }
 
@@ -114,7 +116,7 @@ fun Abfrage.checkboxes(given: List<String>?, searchIn: List<String>?, texts: Lis
                     checked.forEach { (i, _) ->
                         checked[i] = false
                     }
-                    item = AndroidConfig.instance.vocabs.getWorst()
+                    item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
                 }, colors = Colors.tabItemButtonColors, modifier = Modifier.fillMaxWidth()) {
                     Text("next")
                 }

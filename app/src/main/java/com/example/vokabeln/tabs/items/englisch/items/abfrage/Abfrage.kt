@@ -13,25 +13,26 @@ import com.example.vokabeln.tabs.items.englisch.items.abfrage.english.text.engli
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.german.checkboxes.germanCheckboxes
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.german.text.germanGiven
 import com.example.vokabeln.tabs.items.englisch.items.abfrage.method.AbfrageMethod
+import com.example.vokabeln.utils.collections.unpack
 import com.example.vokabeln.utils.vocabs.getWorst
+import com.google.accompanist.pager.ExperimentalPagerApi
 
 object Abfrage {
-    var item by mutableStateOf(AndroidConfig.instance.vocabs.getWorst())
+    var item by mutableStateOf(AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst())
     var method by mutableStateOf(AbfrageMethod.values().random())
     const val defaultNumCheckboxes = 4
 
     val abfrage: TabItem
-        @Composable get() = TabItem(Icons.Filled.QuestionAnswer, "abfrage") {
+        @OptIn(ExperimentalPagerApi::class) @Composable get() = TabItem(Icons.Filled.QuestionAnswer, "abfrage") {
             when (method) {
                 AbfrageMethod.ENGLISHGIVEN -> englishGiven()
                 AbfrageMethod.GERMANGIVEN -> germanGiven()
                 AbfrageMethod.CheckBoxesGermanGiven -> {
-                    if (AndroidConfig.instance.vocabs.size >= defaultNumCheckboxes) englishCheckboxes() else germanGiven()
+                    if ((AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.size ?: 0) >= defaultNumCheckboxes /* && AndroidConfig.instance.key != "neuer tab" */) englishCheckboxes() else germanGiven()
                 }
                 AbfrageMethod.CheckBoxesEnglishGiven -> {
-                    if (AndroidConfig.instance.vocabs.size >= defaultNumCheckboxes) germanCheckboxes() else englishGiven()
+                    if ((AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.size ?: 0) >= defaultNumCheckboxes /* && AndroidConfig.instance.key != "neuer tab" */) germanCheckboxes() else englishGiven()
                 }
             }
-
         }
 }

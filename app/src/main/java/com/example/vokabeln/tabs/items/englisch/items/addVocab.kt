@@ -66,9 +66,9 @@ val addVocab: TabItem
                             0,
                             0
                         )
-                        if (vocab !in AndroidConfig.instance.vocabs) {
-                            AndroidConfig.instance.vocabs += vocab
-                            Abfrage.item = AndroidConfig.instance.vocabs.getWorst()
+                        if (vocab !in (AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key) ?: mutableListOf())) {
+                            AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.plusAssign(vocab)
+                            Abfrage.item = AndroidConfig.instance.getVocabsAtKey(AndroidConfig.instance.key)?.getWorst()
                             MainActivity.makeTaost("vokabel erstellt")
                         } else {
                             MainActivity.makeTaost("vokabel existiert bereits")

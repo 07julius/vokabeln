@@ -15,8 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.vokabeln.MainActivity
 import com.example.vokabeln.tabs.item.TabItem
 import com.example.vokabeln.tabs.items.englisch.config.AndroidConfig
+import com.example.vokabeln.tabs.items.englisch.config.Vocab
 import com.example.vokabeln.theme.Colors
 import com.example.vokabeln.theme.Modifiers
+import com.example.vokabeln.utils.compose.TabItemText
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 val newTab = TabItem(Icons.Filled.PlusOne, "neuer tab") {
     var state by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    var vocabsInTab = remember { listOf<Vocab>() }
 
     Column(modifier = Modifiers.tabItemColumnModifier) {
         TextField(
@@ -44,7 +47,7 @@ val newTab = TabItem(Icons.Filled.PlusOne, "neuer tab") {
             onClick = {
                 if (state.isNotEmpty()) {
                     if (!AndroidConfig.instance.vocabs.keys.contains(state) || state == "alle") {
-                        AndroidConfig.instance.vocabs[state] = mutableStateListOf()
+                        AndroidConfig.instance.vocabs[state] = vocabsInTab.toMutableStateList()
                         MainActivity.makeTaost("tab erstellt")
                     } else {
                         MainActivity.makeTaost("tab existiert bereits")
@@ -62,7 +65,18 @@ val newTab = TabItem(Icons.Filled.PlusOne, "neuer tab") {
         ) {
             Text("Tab hinzufügen")
         }
+
+        Spacer(modifier = Modifier.padding(10.dp))
+
+        TabItemText("vokabeln")
+
+        Spacer(modifier = Modifier.padding(10.dp))
+
+        AllItems(true) {
+            println(it)
+            vocabsInTab = it
+        }
     }
 }
 
-fun <K, V> Map<K, V>.indexOf(key: K): Int = map { it.key }.indexOf(key)
+fun <K> Map<K, *>.indexOf(key: K): Int = map { it.key }.indexOf(key)

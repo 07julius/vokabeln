@@ -113,6 +113,8 @@ class AndroidConfig private constructor() {
     }
 
     fun applyVocab(vocab: Vocab, block: Vocab.() -> Unit) {
-        vocabs[key]!![vocabs[key]!!.indexOf(vocab)].apply(block)
+        (vocabs[key] ?: vocabs.map { it.value }.unpack())[(vocabs[key] ?: vocabs.map { it.value }.unpack()).indexOf(
+            vocab
+        )].apply(block)
     }
 }
